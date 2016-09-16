@@ -1,7 +1,5 @@
 -- | Generic computation of a skeleton.
 --
--- $skeleton
---
 module Generics.SOP.Skeleton (Skeleton(..)) where
 
 import Control.Exception
