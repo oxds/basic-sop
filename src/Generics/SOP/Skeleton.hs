@@ -58,9 +58,9 @@ instance Skeleton Rational  where skeleton = undefined
 instance Skeleton Bool      where skeleton = undefined
 instance Skeleton Text      where skeleton = undefined
 
-{-------------------------------------------------------------------------------
+{-
   Generic instance
--------------------------------------------------------------------------------}
+-}
 
 -- | Compute a "spine" for single constructor datatype. That is, a valid of
 -- that type with a defined spine but undefined everywhere else. For record
@@ -71,7 +71,7 @@ gskeleton = to $ gskeleton' (datatypeInfo (Proxy :: Proxy a))
 gskeleton' :: All Skeleton xs => DatatypeInfo '[xs] -> SOP I '[xs]
 gskeleton' (ADT     _ _ (c :* Nil)) = gskeletonFor c
 gskeleton' (Newtype _ _ c)          = gskeletonFor c
-gskeleton' _ = error "inaccessible"
+--gskeleton' _ = error "inaccessible"
 
 gskeletonFor :: All Skeleton xs => ConstructorInfo xs -> SOP I '[xs]
 gskeletonFor (Constructor _)     = SOP $ Z $ spineWithNames (hpure (K ""))
@@ -81,7 +81,7 @@ gskeletonFor (Record      _ fs)  = SOP $ Z $ spineWithNames (hliftA fieldName fs
     fieldName :: FieldInfo a -> K String a
     fieldName (FieldInfo n) = K n
 
-spineWithNames :: (All Skeleton xs, SListI xs) => NP (K String) xs -> NP I xs
+spineWithNames :: (All Skeleton xs) => NP (K String) xs -> NP I xs
 spineWithNames = hcliftA ps aux
   where
     aux :: Skeleton a => K String a -> I a
@@ -90,6 +90,7 @@ spineWithNames = hcliftA ps aux
 
 addFieldName :: FieldName -> ErrorCall -> ErrorCall
 addFieldName n (ErrorCall str) = ErrorCall (n ++ ": " ++ str)
+addFieldName _ _ = undefined
 
 ps :: Proxy Skeleton
 ps = Proxy

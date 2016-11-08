@@ -31,7 +31,7 @@ gshow a = case datatypeInfo (Proxy :: Proxy a) of
             ADT     _ _ cs -> gshow' cs         (from a)
             Newtype _ _ c  -> gshow' (c :* Nil) (from a)
 
-gshow' :: (All2 Show xss, SListI xss) => NP ConstructorInfo xss -> SOP I xss -> String
+gshow' :: (All2 Show xss) => NP ConstructorInfo xss -> SOP I xss -> String
 gshow' cs (SOP sop) = hcollapse $ hcliftA2 allp goConstructor cs sop
 
 goConstructor :: All Show xs => ConstructorInfo xs -> NP I xs -> K String xs
@@ -49,7 +49,7 @@ goConstructor (Record n ns) args =
 
 goConstructor (Infix n _ _) (arg1 :* arg2 :* Nil) =
     K $ show arg1 ++ " " ++ show n ++ " " ++ show arg2
-goConstructor (Infix _ _ _) _ = error "inaccessible"
+--goConstructor (Infix _ _ _) _ = error "inaccessible"
 
 goField :: Show a => FieldInfo a -> I a -> K String a
 goField (FieldInfo field) (I a) = K $ field ++ " = " ++ show a
