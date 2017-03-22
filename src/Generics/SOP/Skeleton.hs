@@ -76,10 +76,10 @@ gskeleton' (Newtype _ _ c)          = gskeletonFor c
 gskeletonFor :: All Skeleton xs => ConstructorInfo xs -> SOP I '[xs]
 gskeletonFor (Constructor _)     = SOP $ Z $ spineWithNames (hpure (K ""))
 gskeletonFor (Infix       _ _ _) = SOP $ Z $ spineWithNames (hpure (K ""))
-gskeletonFor (Record      _ fs)  = SOP $ Z $ spineWithNames (hliftA fieldName fs)
+gskeletonFor (Record      _ fs)  = SOP $ Z $ spineWithNames (hliftA fName fs)
   where
-    fieldName :: FieldInfo a -> K String a
-    fieldName (FieldInfo n) = K n
+    fName :: FieldInfo a -> K String a
+    fName (FieldInfo n) = K n
 
 spineWithNames :: (All Skeleton xs) => NP (K String) xs -> NP I xs
 spineWithNames = hcliftA ps aux
